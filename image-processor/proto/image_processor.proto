@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+package image_processor;
+
+// Image processing RPC service - stateless, cloud-ready
+service ImageProcessorService {
+  // Single method: process image with operations, return result in same request
+  rpc ProcessImage(ProcessImageRequest) returns (ProcessImageResponse);
+}
+
+message Operation {
+  string type = 1;   // flip_horizontal, flip_vertical, rotate_degrees, rotate_left, rotate_right, resize, grayscale, generate_thumbnail
+  int32 angle = 2;   // For rotate_degrees
+  int32 width = 3;   // For resize, thumbnail
+  int32 height = 4;  // For resize, thumbnail
+}
+
+message ProcessImageRequest {
+  bytes image_data = 1;
+  repeated Operation operations = 2;
+  bool generate_thumbnail = 3;
+  int32 thumbnail_width = 4;   // Optional, default 256 when generate_thumbnail=true
+  int32 thumbnail_height = 5;  // Optional, default 256 when generate_thumbnail=true
+}
+
+message ProcessImageResponse {
+  bytes processed_image = 1;
+  bytes thumbnail_image = 2;  // Optional, populated when generate_thumbnail=true
+}
